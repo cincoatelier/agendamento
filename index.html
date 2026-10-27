@@ -1,44 +1,255 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo HTML/CSS</title>
-    <!-- Link para o ficheiro CSS externo -->
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avaliação gratuita da sua planta</title>
+<style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f6f3ee;--card:#fffdf9;--ink:#23211e;--muted:#6f6a62;--line:#ddd6ca;--accent:#8a4b2a;--accent-ink:#fff;--soft:#efe6da;--err:#b3261e;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1c1a17;--card:#25221e;--ink:#f0ebe3;--muted:#a39b8f;--line:#3a352e;--accent:#d08a5e;--accent-ink:#1c1a17;--soft:#332e27;--err:#f2928b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1a17;--card:#25221e;--ink:#f0ebe3;--muted:#a39b8f;--line:#3a352e;--accent:#d08a5e;--accent-ink:#1c1a17;--soft:#332e27;--err:#f2928b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:680px;margin:0 auto;padding:32px 20px 64px}
+header{margin-bottom:28px}
+.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--accent);font-weight:600}
+h1{font:400 clamp(28px,6vw,40px)/1.15 Georgia,"Times New Roman",serif;margin:8px 0 12px}
+header p{color:var(--muted);margin:0}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:22px 20px;margin:0 0 20px;min-width:0}
+legend{font:400 20px Georgia,serif;padding:0 8px;margin-left:-8px}
+.num{display:inline-block;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:600 13px/26px Arial,sans-serif;text-align:center;margin-right:8px;vertical-align:2px}
+label.f{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input[type=text],input[type=email],input[type=tel],textarea{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+textarea{min-height:96px;resize:vertical}
+.hint{font-size:13px;color:var(--muted);margin:4px 0 0}
+.opts{display:grid;gap:10px;margin-top:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--bg)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.opt input{margin-top:4px;accent-color:var(--accent)}
+.opt b{display:block;font-weight:600}
+.opt span{font-size:13.5px;color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;background:var(--bg)}
+.drop.over,.drop:hover{border-color:var(--accent);background:var(--soft)}
+.drop strong{display:block;margin-bottom:4px}
+.drop small{color:var(--muted)}
+.file{display:none;margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;align-items:center;justify-content:space-between;gap:10px;font-size:14px;background:var(--bg)}
+.file.on{display:flex}
+.file button{background:none;border:0;color:var(--err);cursor:pointer;font:inherit;text-decoration:underline}
+.grid{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:340px;margin-top:8px}
+th{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:4px}
+td{padding:4px;text-align:center}
+td:first-child{text-align:left;font-weight:600;font-size:14px;white-space:nowrap}
+.cell{display:block}
+.cell input{position:absolute;opacity:0;pointer-events:none}
+.cell span{display:block;padding:9px 0;border:1px solid var(--line);border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;background:var(--bg);user-select:none}
+.cell input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.cell input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.consent{display:flex;gap:10px;font-size:13.5px;color:var(--muted);margin:6px 0 20px}
+.consent input{margin-top:3px;accent-color:var(--accent)}
+.btn{width:100%;padding:15px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:600 16px Arial,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.sec{background:var(--soft);color:var(--ink);border:1px solid var(--line);width:auto;padding:11px 16px;font-size:14px}
+.err{color:var(--err);font-size:13px;margin:6px 0 0;display:none}
+.bad .err{display:block}
+.bad input[type=text],.bad input[type=email],.bad input[type=tel],.bad .drop{border-color:var(--err)}
+#status{margin-top:14px;font-size:14px;color:var(--err)}
+.done{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 22px;text-align:center}
+.done h2{font:400 26px Georgia,serif;margin:0 0 10px}
+.done p{color:var(--muted)}
+.done pre{text-align:left;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px;font-size:13px;max-height:240px;overflow:auto}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+</style>
 </head>
-
 <body>
-<body class="w3-light-grey">
-
-<!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-bar-block w3-black w3-animate-right w3-top w3-text-light-grey w3-large" style="z-index:3;width:250px;font-weight:bold;display:none;right:0;" id="mySidebar">
-  <a href="javascript:void()" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-32">CLOSE</a> 
-  <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-16">PORTFOLIO</a> 
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-16">ABOUT ME</a> 
-  <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-16">CONTACT</a>
-</nav>
-
-<!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-white w3-xlarge w3-padding-16">
-  <span class="w3-left w3-padding">It's my stuff, not your. piss off! ass. Vera</span>
-  <a href="javascript:void(0)" class="w3-right w3-button w3-white" onclick="w3_open()">☰</a>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Atelier de arquitectura</div>
+  <h1>Avaliação gratuita da planta do seu espaço</h1>
+  <p>Envie-nos a planta, conte-nos o que pretende e marque a sua disponibilidade. Analisamos o material e damos-lhe a nossa opinião numa conversa online, sem custos nem compromisso.</p>
 </header>
 
-<!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+<form id="form" novalidate>
+  <input type="hidden" name="_subject" value="Novo pedido de avaliação de planta">
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+  <fieldset>
+    <legend><span class="num">1</span>Os seus dados</legend>
+    <div class="fld"><label class="f" for="nome">Nome completo</label>
+      <input type="text" id="nome" name="nome" autocomplete="name"><p class="err">Indique o seu nome.</p></div>
+    <div class="fld"><label class="f" for="email">E-mail</label>
+      <input type="email" id="email" name="email" autocomplete="email"><p class="err">Indique um e-mail válido.</p></div>
+    <div class="fld"><label class="f" for="tel">Contacto telefónico</label>
+      <input type="tel" id="tel" name="telefone" autocomplete="tel"><p class="err">Indique um número de telefone.</p></div>
+  </fieldset>
 
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content" style="max-width:1600px;margin-top:83px">
-  
-  <!-- Photo grid -->
-  <div class="w3-row w3-grayscale-min">
-    <div class="w3-quarter">
-      <img src="https://mega.nz/file/ylpElCaR#7Sr7D47kVtKt0068ez4hJ7e_m4_Hmq15sh-M32__0Hs" style="width:100%" onclick="onClick(this)" alt="Some kind of party">
-      <img src="/w3images/boy.jpg" style="width:100%" onclick="onClick(this)" alt="Quiet day at the beach. Cold, but beautiful">
-      <img src="/w3images/girl.jpg" style="width:100%" onclick="onClick(this)" alt="The Beach. Me. Alone. Beautiful">
-   </div>
-  
-  </body>
-  </html>
-    
+  <fieldset>
+    <legend><span class="num">2</span>O seu projecto</legend>
+    <div class="fld" id="f-tipo">
+      <label class="f" style="margin-top:0">O que pretende que analisemos?</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="espaco" value="Casa completa"><div><b>Casa completa</b><span>Apartamento ou moradia inteira</span></div></label>
+        <label class="opt"><input type="radio" name="espaco" value="Quarto"><div><b>Quarto</b><span>Uma divisão específica da casa</span></div></label>
+        <label class="opt"><input type="radio" name="espaco" value="Espaço de negócio / escritório"><div><b>Espaço de negócio / escritório</b><span>Local de trabalho ou serviços</span></div></label>
+        <label class="opt"><input type="radio" name="espaco" value="Loja"><div><b>Loja</b><span>Espaço comercial aberto ao público</span></div></label>
+      </div>
+      <p class="err">Escolha uma opção.</p>
+    </div>
+    <div class="fld" id="f-inter">
+      <label class="f">Que tipo de intervenção pretende?</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="intervencao" value="Remodelação profunda (com demolições)"><div><b>Remodelação profunda</b><span>Inclui demolições e alterações de paredes ou da estrutura de divisões</span></div></label>
+        <label class="opt"><input type="radio" name="intervencao" value="Alterações de mobiliário e layout"><div><b>Alterações de mobiliário</b><span>Reorganizar o espaço e o mobiliário, sem obras pesadas</span></div></label>
+        <label class="opt"><input type="radio" name="intervencao" value="Apenas decoração"><div><b>Apenas decoração</b><span>Cores, materiais, iluminação e acabamentos</span></div></label>
+      </div>
+      <p class="err">Escolha uma opção.</p>
+    </div>
+    <label class="f" for="desc">Quer acrescentar algum detalhe? <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
+    <textarea id="desc" name="detalhes" placeholder="Por exemplo: área aproximada, o que não lhe agrada hoje, ideias que já tem…"></textarea>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">3</span>Planta do espaço</legend>
+    <div class="fld" id="f-file">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Carregar ficheiro">
+        <strong>Arraste o ficheiro para aqui ou toque para escolher</strong>
+        <small>PDF ou imagem (JPG, PNG) · máximo 10 MB</small>
+      </div>
+      <input type="file" id="file" name="planta" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*" hidden>
+      <div class="file" id="fileinfo"><span id="filename"></span><button type="button" id="rm">Remover</button></div>
+      <p class="err" id="ferr">Carregue a planta em PDF ou imagem (até 10 MB).</p>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><span class="num">4</span>Disponibilidade semanal</legend>
+    <p class="hint" style="margin-top:0">Assinale os períodos em que lhe é possível falar connosco online. Escolha os que quiser.</p>
+    <div class="grid" id="f-disp">
+      <table>
+        <thead><tr><th></th><th>Manhã</th><th>Tarde</th><th>Fim do dia</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <p class="err" id="derr">Assinale pelo menos um período.</p>
+  </fieldset>
+
+  <label class="consent"><input type="checkbox" id="rgpd" name="consentimento" value="Aceite"><span>Aceito que o atelier utilize os meus dados e o ficheiro enviado apenas para analisar o meu pedido e entrar em contacto comigo.</span></label>
+  <p class="err" id="rerr" style="margin:-12px 0 16px">É necessário aceitar para submeter o pedido.</p>
+
+  <button class="btn" id="go" type="submit">Pedir avaliação gratuita</button>
+  <div id="status" role="alert"></div>
+</form>
+
+<section class="done" id="done">
+  <h2 id="dt">Pedido recebido</h2>
+  <div id="db"></div>
+</section>
+</div>
+
+<script>
+(function(){
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvqJmH2SHNKRnOn8cdkoeNT4HsQ7VKjfl6n7yRjRwv4PsmigZw82j4uknHO9niAbMe/exec";
+  var MAX = 10*1024*1024;
+  var dias = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+  var per = ["Manhã","Tarde","Fim do dia"];
+  var $ = function(id){return document.getElementById(id)};
+  var file = null;
+
+  var tb = $("tb");
+  dias.forEach(function(d,i){
+    var tr = document.createElement("tr");
+    var h = '<td>'+d+'</td>';
+    per.forEach(function(p,j){
+      h += '<td><label class="cell"><input type="checkbox" name="disponibilidade" value="'+d+' – '+p+'" data-d="'+d+'" data-p="'+p+'" aria-label="'+d+', '+p+'"><span>'+(j==0?"9–13h":j==1?"14–18h":"18–20h")+'</span></label></td>';
+    });
+    tr.innerHTML = h; tb.appendChild(tr);
+  });
+
+  var drop = $("drop"), inp = $("file");
+  drop.addEventListener("click",function(){inp.click()});
+  drop.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();inp.click()}});
+  ["dragenter","dragover"].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.add("over")})});
+  ["dragleave","drop"].forEach(function(ev){drop.addEventListener(ev,function(e){e.preventDefault();drop.classList.remove("over")})});
+  drop.addEventListener("drop",function(e){var f=e.dataTransfer.files[0];if(f){try{inp.files=e.dataTransfer.files}catch(x){}setFile(f)}});
+  inp.addEventListener("change",function(){if(inp.files[0])setFile(inp.files[0])});
+  $("rm").addEventListener("click",function(){file=null;inp.value="";$("fileinfo").classList.remove("on")});
+
+  function okType(f){return /^image\//.test(f.type)||f.type==="application/pdf"||/\.(pdf|jpe?g|png|webp)$/i.test(f.name)}
+  function setFile(f){
+    var box = $("f-file");
+    if(!okType(f)||f.size>MAX){
+      file=null;box.classList.add("bad");
+      $("ferr").textContent = !okType(f) ? "Formato não suportado. Use PDF, JPG ou PNG." : "O ficheiro excede 10 MB.";
+      return;
+    }
+    file=f;box.classList.remove("bad");
+    $("filename").textContent = f.name+" ("+(f.size/1048576).toFixed(1)+" MB)";
+    $("fileinfo").classList.add("on");
+  }
+
+  function val(){
+    var ok = true;
+    function mark(el,bad){el.classList.toggle("bad",bad); if(bad) ok=false}
+    var nome=$("nome").value.trim(), em=$("email").value.trim(), tel=$("tel").value.trim();
+    mark($("nome").parentNode, !nome);
+    mark($("email").parentNode, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em));
+    mark($("tel").parentNode, tel.replace(/\D/g,"").length<9);
+    mark($("f-tipo"), !document.querySelector('input[name=espaco]:checked'));
+    mark($("f-inter"), !document.querySelector('input[name=intervencao]:checked'));
+    if(!file){ $("ferr").textContent="Carregue a planta em PDF ou imagem (até 10 MB)."; mark($("f-file"),true) }
+    var nd = document.querySelectorAll("#tb input:checked").length;
+    $("derr").style.display = nd?"none":"block"; if(!nd) ok=false;
+    $("rerr").style.display = $("rgpd").checked?"none":"block"; if(!$("rgpd").checked) ok=false;
+    return ok;
+  }
+
+  function dados(){
+    var disp = {};
+    document.querySelectorAll("#tb input:checked").forEach(function(c){
+      (disp[c.dataset.d] = disp[c.dataset.d]||[]).push(c.dataset.p);
+    });
+    return {
+      nome:$("nome").value.trim(), email:$("email").value.trim(), telefone:$("tel").value.trim(),
+      espaco:document.querySelector('input[name=espaco]:checked').value,
+      intervencao:document.querySelector('input[name=intervencao]:checked').value,
+      detalhes:$("desc").value.trim(), disponibilidade:disp,
+      ficheiro:file?file.name:"", criadoEm:new Date().toISOString()
+    };
+  }
+
+  function ok(d){
+    $("form").style.display="none"; $("done").style.display="block";
+    $("db").innerHTML = '<p>Obrigado, '+esc(d.nome.split(" ")[0])+'. Recebemos a sua planta e vamos analisá-la. Entraremos em contacto através do e-mail ou telefone indicados para marcar a conversa online.</p>';
+    window.scrollTo(0,0);
+  }
+
+  function b64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(",")[1])};r.onerror=rej;r.readAsDataURL(f)})}
+
+  $("form").addEventListener("submit",async function(e){
+    e.preventDefault();
+    if(!val()){ var b=document.querySelector(".bad"); if(b) b.scrollIntoView({behavior:"smooth",block:"center"}); return }
+    var btn=$("go"), st=$("status"); btn.disabled=true; st.textContent=""; btn.textContent="A enviar…";
+    var d = dados();
+    try{
+      var payload = {
+        nome:d.nome, email:d.email, telefone:d.telefone, espaco:d.espaco, intervencao:d.intervencao, detalhes:d.detalhes,
+        disponibilidade:Object.keys(d.disponibilidade).map(function(k){return k+": "+d.disponibilidade[k].join(", ")}).join(" | "),
+        gotcha:document.querySelector("[name=_gotcha]").value,
+        ficheiro:{nome:file.name, tipo:file.type||"application/octet-stream", base64:await b64(file)}
+      };
+      await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+      ok(d);
+    }catch(err){
+      st.textContent="Não foi possível enviar o pedido. Verifique a ligação e tente novamente.";
+      btn.disabled=false; btn.textContent="Pedir avaliação gratuita";
+    }
+  });
+})();
+</script>
+</body>
+</html>
